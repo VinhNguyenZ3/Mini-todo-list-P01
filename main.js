@@ -7,17 +7,29 @@ const todoForm = $(".todo-form");
 const todoInput = $("#todo-input");
 const todoEdit = $("#todo-input");
 
+function isDuplicateTask(newTitle, excludeIndex = -1) {
+  const isDuplicate = tasks.some(
+    (task, index) => task.title === newTitle && excludeIndex !== index
+  );
+  return isDuplicate;
+}
+
 function addTask(e) {
   e.preventDefault();
 
-  const value = todoInput.value.trim();
-  if (!value) {
+  const newTitle = todoInput.value.trim();
+  if (isDuplicateTask(newTitle))
+    return alert(
+      "Task with this title already exists! Please use a different title."
+    );
+
+  if (!newTitle) {
     todoInput.value = "";
     return alert("Please write something!");
   }
 
   tasks.push({
-    title: value,
+    title: newTitle,
     completed: false,
   });
   renderTasks();
@@ -27,13 +39,19 @@ function addTask(e) {
 function handleTaskActions(e) {
   e.preventDefault();
   const itemTodo = e.target.closest(".task-item");
-  const taskIndex = itemTodo.getAttribute("task-index");
+  const taskIndex = +itemTodo.getAttribute("task-index");
   const task = tasks[taskIndex];
 
   if (e.target.closest(".edit")) {
     const newTitle = prompt("Enter the new task title:", task.title).trim();
 
+    if (isDuplicateTask(newTitle, taskIndex))
+      return alert(
+        "Task with this title already exists! Please use a different title."
+      );
+
     if (newTitle === null) return;
+
     if (!newTitle) {
       alert("Task title cannot be empty!");
       return;
