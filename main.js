@@ -7,6 +7,13 @@ const todoForm = $(".todo-form");
 const todoInput = $("#todo-input");
 const todoEdit = $("#todo-input");
 
+function escapeHTML(html) {
+  const div = document.createElement("div");
+  div.innerText = html;
+  console.log(div);
+  return div.innerHTML;
+}
+
 function isDuplicateTask(newTitle, excludeIndex = -1) {
   const isDuplicate = tasks.some(
     (task, index) => task.title === newTitle && excludeIndex !== index
@@ -41,9 +48,9 @@ function addTask(e) {
 }
 
 function handleTaskActions(e) {
-  e.preventDefault();
-  const itemTodo = e.target.closest(".task-item");
-  const taskIndex = +itemTodo.getAttribute("task-index");
+  const taskItem = e.target.closest(".task-item");
+  if (!taskItem) return;
+  const taskIndex = +taskItem.getAttribute("data-index");
   const task = tasks[taskIndex];
 
   if (e.target.closest(".edit")) {
@@ -82,10 +89,10 @@ function renderTasks() {
 
   let html = tasks
     .map(
-      (task, index) => `<li task-index="${index}" class="task-item ${
+      (task, index) => `<li data-index="${index}" class="task-item ${
         task.completed ? "completed" : ""
       }">
-        <span class="task-title">${task.title}</span>
+        <span class="task-title">${escapeHTML(task.title)}</span>
         <div class="task-action">
             <button class="task-btn edit">Edit</button>
             <button class="task-btn done">${
