@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-const tasks = [];
+const tasks = JSON.parse(localStorage.getItem("tasks")) ?? [];
 const taskList = $("#task-list");
 const todoForm = $(".todo-form");
 const todoInput = $("#todo-input");
@@ -12,6 +12,10 @@ function isDuplicateTask(newTitle, excludeIndex = -1) {
     (task, index) => task.title === newTitle && excludeIndex !== index
   );
   return isDuplicate;
+}
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function addTask(e) {
@@ -93,6 +97,7 @@ function renderTasks() {
     )
     .join("");
   taskList.innerHTML = html;
+  saveTasks();
 }
 
 renderTasks();
